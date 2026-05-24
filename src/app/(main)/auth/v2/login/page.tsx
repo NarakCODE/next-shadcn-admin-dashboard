@@ -21,15 +21,15 @@ export default function LoginV2() {
             <span className="relative z-10 bg-background px-2 text-muted-foreground">Or continue with</span>
           </div>
           <LoginForm />
-        </div>
-      </div>
 
-      <div className="absolute top-5 flex w-full justify-end px-10">
-        <div className="text-muted-foreground text-sm">
-          Don&apos;t have an account?{" "}
-          <Link prefetch={false} className="text-foreground" href="register">
-            Register
-          </Link>
+          <div className=" flex w-full justify-center px-10">
+            <div className="text-muted-foreground text-sm">
+              Don&apos;t have an account?{" "}
+              <Link prefetch={false} className="text-foreground" href="register">
+                Register
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
 
