@@ -1,4 +1,7 @@
 import {
+  AlertCircle,
+  AlertTriangle,
+  Ban,
   Banknote,
   Calendar,
   ChartBar,
@@ -14,8 +17,10 @@ import {
   Mail,
   MessageSquare,
   ReceiptText,
+  ServerOff,
   ShoppingBag,
   SquareArrowUpRight,
+  Unplug,
   Users,
 } from "lucide-react";
 
@@ -103,9 +108,8 @@ export const sidebarItems: NavGroup[] = [
       },
       {
         title: "Chat",
-        url: "/dashboard/coming-soon",
+        url: "/dashboard/chat",
         icon: MessageSquare,
-        comingSoon: true,
       },
       {
         title: "Calendar",
@@ -146,6 +150,19 @@ export const sidebarItems: NavGroup[] = [
           { title: "Login v2", url: "/auth/v2/login", newTab: true },
           { title: "Register v1", url: "/auth/v1/register", newTab: true },
           { title: "Register v2", url: "/auth/v2/register", newTab: true },
+        ],
+      },
+      {
+        title: "Errors",
+        url: "/errors",
+        icon: AlertTriangle,
+        subItems: [
+          { title: "400 - Bad Request", url: "/errors/400" },
+          { title: "401 - Unauthorized", url: "/errors/401" },
+          { title: "403 - Forbidden", url: "/errors/403" },
+          { title: "404 - Not Found", url: "/errors/404" },
+          { title: "500 - Internal Server Error", url: "/errors/500" },
+          { title: "503 - Service Unavailable", url: "/errors/503" },
         ],
       },
     ],
