@@ -120,6 +120,11 @@ export const sidebarItems: NavGroup[] = [
           { title: "Blog Create", url: "/dashboard/blog/create" },
           { title: "Blog Edit", url: "/dashboard/blog/edit" },
           { title: "Manage Blog", url: "/dashboard/blog/manage" },
+          { title: "Categories", url: "/dashboard/blog/categories" },
+          { title: "Tags", url: "/dashboard/blog/tags" },
+          { title: "Comments", url: "/dashboard/blog/comments" },
+          { title: "Analytics", url: "/dashboard/blog/analytics" },
+          { title: "Settings", url: "/dashboard/blog/settings" },
         ],
       },
       {
