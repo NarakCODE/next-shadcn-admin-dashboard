@@ -111,9 +111,16 @@ export const sidebarItems: NavGroup[] = [
         icon: "mynaui:shield",
       },
       {
-        title: "Blog",
+        title: "Blogs",
         url: "/dashboard/blog",
-        icon: "mynaui:file-edit",
+        icon: "mynaui:book-open",
+        subItems: [
+          { title: "Blog Posts", url: "/dashboard/blog" },
+          { title: "Blog Detail", url: "/dashboard/blog/detail" },
+          { title: "Blog Create", url: "/dashboard/blog/create" },
+          { title: "Blog Edit", url: "/dashboard/blog/edit" },
+          { title: "Manage Blog", url: "/dashboard/blog/manage" },
+        ],
       },
       {
         title: "Authentication",
