@@ -13,6 +13,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { LocalIcon } from "@/components/ui/local-icon";
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -54,7 +55,7 @@ const NavItemExpanded = ({
               isActive={isActive(item.url, item.subItems)}
               tooltip={item.title}
             >
-              {item.icon && <item.icon />}
+              {item.icon && <LocalIcon icon={item.icon} className="h-4 w-4" />}
               <span>{item.title}</span>
               {item.comingSoon && <IsComingSoon />}
               <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
@@ -67,7 +68,7 @@ const NavItemExpanded = ({
               tooltip={item.title}
             >
               <Link prefetch={false} href={item.url} target={item.newTab ? "_blank" : undefined}>
-                {item.icon && <item.icon />}
+                {item.icon && <LocalIcon icon={item.icon} className="h-4 w-4" />}
                 <span>{item.title}</span>
                 {item.comingSoon && <IsComingSoon />}
               </Link>
@@ -81,7 +82,7 @@ const NavItemExpanded = ({
                 <SidebarMenuSubItem key={subItem.title}>
                   <SidebarMenuSubButton aria-disabled={subItem.comingSoon} isActive={isActive(subItem.url)} asChild>
                     <Link prefetch={false} href={subItem.url} target={subItem.newTab ? "_blank" : undefined}>
-                      {subItem.icon && <subItem.icon />}
+                      {subItem.icon && <LocalIcon icon={subItem.icon} className="h-4 w-4" />}
                       <span>{subItem.title}</span>
                       {subItem.comingSoon && <IsComingSoon />}
                     </Link>
@@ -112,7 +113,7 @@ const NavItemCollapsed = ({
             tooltip={item.title}
             isActive={isActive(item.url, item.subItems)}
           >
-            {item.icon && <item.icon />}
+            {item.icon && <LocalIcon icon={item.icon} className="h-4 w-4" />}
             <span>{item.title}</span>
             <ChevronRight />
           </SidebarMenuButton>
@@ -128,7 +129,7 @@ const NavItemCollapsed = ({
                 isActive={isActive(subItem.url)}
               >
                 <Link prefetch={false} href={subItem.url} target={subItem.newTab ? "_blank" : undefined}>
-                  {subItem.icon && <subItem.icon className="[&>svg]:text-sidebar-foreground" />}
+                  {subItem.icon && <LocalIcon icon={subItem.icon} className="h-4 w-4" />}
                   <span>{subItem.title}</span>
                   {subItem.comingSoon && <IsComingSoon />}
                 </Link>
@@ -188,7 +189,6 @@ export function NavMain({ items }: NavMainProps) {
             <SidebarMenu>
               {group.items.map((item) => {
                 if (state === "collapsed" && !isMobile) {
-                  // If no subItems, just render the button as a link
                   if (!item.subItems) {
                     return (
                       <SidebarMenuItem key={item.title}>
@@ -199,17 +199,15 @@ export function NavMain({ items }: NavMainProps) {
                           isActive={isItemActive(item.url)}
                         >
                           <Link prefetch={false} href={item.url} target={item.newTab ? "_blank" : undefined}>
-                            {item.icon && <item.icon />}
+                            {item.icon && <LocalIcon icon={item.icon} className="h-4 w-4" />}
                             <span>{item.title}</span>
                           </Link>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                     );
                   }
-                  // Otherwise, render the dropdown as before
                   return <NavItemCollapsed key={item.title} item={item} isActive={isItemActive} />;
                 }
-                // Expanded view
                 return (
                   <NavItemExpanded key={item.title} item={item} isActive={isItemActive} isSubmenuOpen={isSubmenuOpen} />
                 );

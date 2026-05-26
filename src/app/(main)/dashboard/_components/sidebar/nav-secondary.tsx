@@ -2,8 +2,7 @@
 
 import type * as React from "react";
 
-import type { LucideIcon } from "lucide-react";
-
+import { LocalIcon } from "@/components/ui/local-icon";
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -19,7 +18,7 @@ export function NavSecondary({
   items: {
     title: string;
     url: string;
-    icon: LucideIcon;
+    icon: string;
   }[];
 } & React.ComponentPropsWithoutRef<typeof SidebarGroup>) {
   return (
@@ -30,7 +29,7 @@ export function NavSecondary({
             <SidebarMenuItem key={item.title}>
               <SidebarMenuButton asChild>
                 <a href={item.url}>
-                  <item.icon />
+                  <LocalIcon icon={item.icon} className="h-4 w-4" />
                   <span>{item.title}</span>
                 </a>
               </SidebarMenuButton>

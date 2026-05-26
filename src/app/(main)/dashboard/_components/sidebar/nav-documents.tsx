@@ -1,6 +1,6 @@
 "use client";
 
-import { Ellipsis, Folder, Forward, type LucideIcon, Trash2 } from "lucide-react";
+import { Ellipsis, Folder, Forward, Trash2 } from "lucide-react";
 
 import {
   DropdownMenu,
@@ -9,6 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { LocalIcon } from "@/components/ui/local-icon";
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -25,7 +26,7 @@ export function NavDocuments({
   readonly items: readonly {
     readonly name: string;
     readonly url: string;
-    readonly icon: LucideIcon;
+    readonly icon: string;
   }[];
 }) {
   const { isMobile } = useSidebar();
@@ -38,7 +39,7 @@ export function NavDocuments({
           <SidebarMenuItem key={item.name}>
             <SidebarMenuButton asChild>
               <a href={item.url}>
-                <item.icon />
+                <LocalIcon icon={item.icon} className="h-4 w-4" />
                 <span>{item.name}</span>
               </a>
             </SidebarMenuButton>

@@ -1,33 +1,7 @@
-import {
-  AlertCircle,
-  AlertTriangle,
-  Ban,
-  Banknote,
-  Calendar,
-  ChartBar,
-  Fingerprint,
-  Forklift,
-  Gauge,
-  GraduationCap,
-  Kanban,
-  LayoutDashboard,
-  ListTodo,
-  Lock,
-  type LucideIcon,
-  Mail,
-  MessageSquare,
-  ReceiptText,
-  ServerOff,
-  ShoppingBag,
-  SquareArrowUpRight,
-  Unplug,
-  Users,
-} from "lucide-react";
-
 export interface NavSubItem {
   title: string;
   url: string;
-  icon?: LucideIcon;
+  icon?: string;
   comingSoon?: boolean;
   newTab?: boolean;
   isNew?: boolean;
@@ -36,7 +10,7 @@ export interface NavSubItem {
 export interface NavMainItem {
   title: string;
   url: string;
-  icon?: LucideIcon;
+  icon?: string;
   subItems?: NavSubItem[];
   comingSoon?: boolean;
   newTab?: boolean;
@@ -57,43 +31,43 @@ export const sidebarItems: NavGroup[] = [
       {
         title: "Default",
         url: "/dashboard/default",
-        icon: LayoutDashboard,
+        icon: "mynaui:home",
       },
       {
         title: "CRM",
         url: "/dashboard/crm",
-        icon: ChartBar,
+        icon: "mynaui:chart-bar",
       },
       {
         title: "Finance",
         url: "/dashboard/finance",
-        icon: Banknote,
+        icon: "mynaui:credit-card",
       },
       {
         title: "Analytics",
         url: "/dashboard/analytics",
-        icon: Gauge,
+        icon: "mynaui:chart-pie",
       },
       {
         title: "Productivity",
         url: "/dashboard/productivity",
-        icon: ListTodo,
+        icon: "mynaui:list-check",
       },
       {
         title: "E-commerce",
         url: "/dashboard/ecommerce",
-        icon: ShoppingBag,
+        icon: "mynaui:shopping-bag",
       },
       {
         title: "Academy",
         url: "/dashboard/academy",
-        icon: GraduationCap,
+        icon: "mynaui:graduation-cap",
         isNew: true,
       },
       {
         title: "Logistics",
         url: "/dashboard/logistics",
-        icon: Forklift,
+        icon: "mynaui:truck",
       },
     ],
   },
@@ -104,47 +78,47 @@ export const sidebarItems: NavGroup[] = [
       {
         title: "Email",
         url: "/dashboard/mail",
-        icon: Mail,
+        icon: "mynaui:mail",
       },
       {
         title: "Chat",
         url: "/dashboard/chat",
-        icon: MessageSquare,
+        icon: "mynaui:chat",
       },
       {
         title: "Calendar",
-        url: "/dashboard/coming-soon",
-        icon: Calendar,
-        comingSoon: true,
+        url: "/dashboard/calendar",
+        icon: "mynaui:calendar",
       },
       {
         title: "Kanban",
-        url: "/dashboard/coming-soon",
-        icon: Kanban,
-        comingSoon: true,
+        url: "/dashboard/kanban",
+        icon: "mynaui:columns",
       },
       {
         title: "Invoice",
-        url: "/dashboard/coming-soon",
-        icon: ReceiptText,
-        comingSoon: true,
+        url: "/dashboard/invoice",
+        icon: "mynaui:file-text",
       },
       {
         title: "Users",
-        url: "/dashboard/coming-soon",
-        icon: Users,
-        comingSoon: true,
+        url: "/dashboard/users",
+        icon: "mynaui:users",
       },
       {
         title: "Roles",
-        url: "/dashboard/coming-soon",
-        icon: Lock,
-        comingSoon: true,
+        url: "/dashboard/roles",
+        icon: "mynaui:shield",
+      },
+      {
+        title: "Blog",
+        url: "/dashboard/blog",
+        icon: "mynaui:file-edit",
       },
       {
         title: "Authentication",
         url: "/auth",
-        icon: Fingerprint,
+        icon: "mynaui:lock",
         subItems: [
           { title: "Login v1", url: "/auth/v1/login", newTab: true },
           { title: "Login v2", url: "/auth/v2/login", newTab: true },
@@ -155,7 +129,7 @@ export const sidebarItems: NavGroup[] = [
       {
         title: "Errors",
         url: "/errors",
-        icon: AlertTriangle,
+        icon: "mynaui:triangle-danger",
         subItems: [
           { title: "400 - Bad Request", url: "/errors/400" },
           { title: "401 - Unauthorized", url: "/errors/401" },
@@ -169,6 +143,25 @@ export const sidebarItems: NavGroup[] = [
   },
   {
     id: 3,
+    label: "Products",
+    items: [
+      {
+        title: "Products",
+        url: "/dashboard/products",
+        icon: "mynaui:box",
+        subItems: [
+          { title: "List", url: "/dashboard/products" },
+          { title: "Shop", url: "/dashboard/products/shop" },
+          { title: "Create", url: "/dashboard/products/create" },
+          { title: "Edit", url: "/dashboard/products/edit" },
+          { title: "Details", url: "/dashboard/products/details" },
+          { title: "Checkout", url: "/dashboard/products/checkout" },
+        ],
+      },
+    ],
+  },
+  {
+    id: 4,
     label: "Legacy",
     items: [
       {
@@ -184,13 +177,13 @@ export const sidebarItems: NavGroup[] = [
     ],
   },
   {
-    id: 4,
+    id: 5,
     label: "Misc",
     items: [
       {
         title: "Others",
         url: "/dashboard/coming-soon",
-        icon: SquareArrowUpRight,
+        icon: "mynaui:arrow-up-right",
         comingSoon: true,
       },
     ],

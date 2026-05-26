@@ -22,7 +22,7 @@ export default function LoginV2() {
           </div>
           <LoginForm />
 
-          <div className=" flex w-full justify-center px-10">
+          <div className="flex w-full justify-center px-10">
             <div className="text-muted-foreground text-sm">
               Don&apos;t have an account?{" "}
               <Link prefetch={false} className="text-foreground" href="register">
