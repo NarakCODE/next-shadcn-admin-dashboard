@@ -4,12 +4,11 @@ import { useMemo, useState } from "react";
 
 import Link from "next/link";
 
-import { format } from "date-fns";
+import { format, formatDate } from "date-fns";
 import {
   ArrowRight,
-  Bookmark,
-  Calendar,
-  Clock,
+  CalendarDays,
+  Dot,
   Filter,
   Grid,
   List,
@@ -17,6 +16,7 @@ import {
   Search,
   Tag,
   TrendingUp,
+  User,
   X,
 } from "lucide-react";
 
@@ -184,15 +184,6 @@ const blogPosts: BlogPost[] = [
   },
 ];
 
-const categoryColors: Record<string, string> = {
-  Development: "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300",
-  Design: "bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300",
-  Security: "bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300",
-  Backend: "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300",
-  Infrastructure: "bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300",
-  Accessibility: "bg-teal-100 text-teal-700 dark:bg-teal-900 dark:text-teal-300",
-};
-
 export default function BlogPage() {
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("");
@@ -272,39 +263,52 @@ export default function BlogPage() {
           </h2>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             {featuredPosts.map((post) => (
-              <Card key={post.id} className="group overflow-hidden hover:border-primary/40 hover:shadow-md">
-                <div className="relative aspect-[16/9] overflow-hidden bg-muted/40">
-                  <img
-                    src={post.image}
-                    alt={post.title}
-                    className="h-full w-full object-cover transition-transform group-hover:scale-105"
-                  />
-                  <Badge className={`absolute top-3 left-3 ${categoryColors[post.category]}`}>{post.category}</Badge>
-                </div>
-                <CardContent className="p-5">
-                  <h3 className="mb-2 line-clamp-2 font-semibold text-lg group-hover:text-primary">
-                    <Link href={`/dashboard/blog/${post.id}`}>{post.title}</Link>
-                  </h3>
-                  <p className="mb-4 line-clamp-2 text-muted-foreground text-sm">{post.excerpt}</p>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="flex items-center gap-2">
-                        <img src={post.authorAvatar} alt={post.author} className="h-6 w-6 rounded-full" />
-                        <span className="text-muted-foreground text-xs">{post.author}</span>
-                      </div>
-                      <span className="flex items-center gap-1 text-muted-foreground text-xs">
-                        <Calendar className="h-3 w-3" />
-                        {format(new Date(post.publishedAt), "MMM dd, yyyy")}
-                      </span>
+              <Link key={post.id} href={`/dashboard/blog/${post.id}`}>
+                <div className="overflow-hidden rounded-xl bg-muted p-2 pb-4">
+                  <div className="relative isolate">
+                    <img
+                      alt={post.title}
+                      className="aspect-[14/9] rounded-lg bg-muted"
+                      src={post.image}
+                    />
+                    <img
+                      alt={post.title}
+                      className="absolute inset-0 -z-10 aspect-[17/9] scale-y-110 rounded bg-muted blur-2xl"
+                      src={post.image}
+                    />
+                  </div>
+                  <div className="px-2 py-1">
+                    <div className="-ms-0.5 mt-4 flex flex-wrap items-center gap-2">
+                      {post.tags.map((tag) => (
+                        <Badge
+                          className="bg-indigo-600/10 text-indigo-500 dark:bg-indigo-500/35 dark:text-indigo-300"
+                          key={tag}
+                          variant="secondary"
+                        >
+                          {tag}
+                        </Badge>
+                      ))}
                     </div>
-                    <Button size="sm" variant="ghost" className="h-7 gap-1 text-xs" asChild>
-                      <Link href={`/dashboard/blog/${post.id}`}>
-                        Read More <ArrowRight className="h-3 w-3" />
-                      </Link>
+                    <h3 className="mt-4 font-medium text-xl tracking-[-0.015em]">
+                      {post.title}
+                    </h3>
+                    <div className="mt-3 flex items-center gap-1">
+                      <div className="flex items-center gap-1.5 text-muted-foreground text-sm">
+                        <CalendarDays className="h-4 w-4" />{" "}
+                        {formatDate(new Date(post.publishedAt), "MMM dd, yyyy")}
+                      </div>
+                      <Dot className="text-muted-foreground" />
+                      <div className="flex items-center gap-1.5 text-muted-foreground text-sm">
+                        <User className="h-4 w-4" /> {post.author}
+                      </div>
+                    </div>
+
+                    <Button className="mt-6">
+                      Read Article <ArrowRight className="h-4 w-4" />
                     </Button>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </Link>
             ))}
           </div>
           <Separator className="mt-6" />
@@ -494,104 +498,103 @@ export default function BlogPage() {
           ) : viewMode === "grid" ? (
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
               {filteredPosts.map((post) => (
-                <Card
-                  key={post.id}
-                  className="group flex flex-col overflow-hidden hover:border-primary/40 hover:shadow-md"
-                >
-                  <div className="relative aspect-[16/10] overflow-hidden bg-muted/40">
-                    <img
-                      src={post.image}
-                      alt={post.title}
-                      className="h-full w-full object-cover transition-transform group-hover:scale-105"
-                    />
-                    <Badge className={`absolute top-2 left-2 ${categoryColors[post.category]} text-xs`}>
-                      {post.category}
-                    </Badge>
-                  </div>
-
-                  <CardContent className="flex flex-1 flex-col p-4">
-                    <h3 className="mb-2 line-clamp-2 font-semibold text-base group-hover:text-primary">
-                      <Link href={`/dashboard/blog/${post.id}`}>{post.title}</Link>
-                    </h3>
-                    <p className="mb-4 line-clamp-2 flex-1 text-muted-foreground text-sm">{post.excerpt}</p>
-
-                    <div className="mb-3 flex items-center gap-3 text-muted-foreground text-xs">
-                      <span className="flex items-center gap-1">
-                        <Clock className="h-3 w-3" />
-                        {post.readTime}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <MessageSquare className="h-3 w-3" />
-                        {post.comments}
-                      </span>
+                <Link key={post.id} href={`/dashboard/blog/${post.id}`}>
+                  <div className="overflow-hidden rounded-xl bg-muted p-2 pb-4">
+                    <div className="relative isolate">
+                      <img
+                        alt={post.title}
+                        className="aspect-[14/9] rounded-lg bg-muted"
+                        src={post.image}
+                      />
+                      <img
+                        alt={post.title}
+                        className="absolute inset-0 -z-10 aspect-[17/9] scale-y-110 rounded bg-muted blur-2xl"
+                        src={post.image}
+                      />
                     </div>
-
-                    <div className="flex items-center justify-between border-t pt-3">
-                      <div className="flex items-center gap-2">
-                        <img src={post.authorAvatar} alt={post.author} className="h-6 w-6 rounded-full" />
-                        <span className="text-muted-foreground text-xs">{post.author}</span>
+                    <div className="px-2 py-1">
+                      <div className="-ms-0.5 mt-4 flex flex-wrap items-center gap-2">
+                        {post.tags.map((tag) => (
+                          <Badge
+                            className="bg-indigo-600/10 text-indigo-500 dark:bg-indigo-500/35 dark:text-indigo-300"
+                            key={tag}
+                            variant="secondary"
+                          >
+                            {tag}
+                          </Badge>
+                        ))}
                       </div>
-                      <Button size="icon" variant="ghost" className="h-7 w-7">
-                        <Bookmark className="h-4 w-4" />
+                      <h3 className="mt-4 font-medium text-xl tracking-[-0.015em]">
+                        {post.title}
+                      </h3>
+                      <div className="mt-3 flex items-center gap-1">
+                        <div className="flex items-center gap-1.5 text-muted-foreground text-sm">
+                          <CalendarDays className="h-4 w-4" />{" "}
+                          {formatDate(new Date(post.publishedAt), "MMM dd, yyyy")}
+                        </div>
+                        <Dot className="text-muted-foreground" />
+                        <div className="flex items-center gap-1.5 text-muted-foreground text-sm">
+                          <User className="h-4 w-4" /> {post.author}
+                        </div>
+                      </div>
+
+                      <Button className="mt-6">
+                        Read Article <ArrowRight className="h-4 w-4" />
                       </Button>
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </Link>
               ))}
             </div>
           ) : (
             <div className="space-y-3">
               {filteredPosts.map((post) => (
-                <Card
-                  key={post.id}
-                  className="group flex flex-col items-start gap-4 overflow-hidden p-4 hover:border-primary/40 sm:flex-row sm:items-center"
-                >
-                  <div className="relative h-24 w-32 flex-shrink-0 overflow-hidden rounded border bg-muted">
-                    <img src={post.image} alt={post.title} className="h-full w-full object-cover" />
-                  </div>
-
-                  <div className="min-w-0 flex-1">
-                    <div className="mb-1 flex flex-wrap items-center gap-2">
-                      <Badge className={`${categoryColors[post.category]} text-xs`}>{post.category}</Badge>
-                      <span className="flex items-center gap-1 text-muted-foreground text-xs">
-                        <Calendar className="h-3 w-3" />
-                        {format(new Date(post.publishedAt), "MMM dd, yyyy")}
-                      </span>
+                <Link key={post.id} href={`/dashboard/blog/${post.id}`}>
+                  <div className="overflow-hidden rounded-xl bg-muted p-2 pb-4">
+                    <div className="relative isolate">
+                      <img
+                        alt={post.title}
+                        className="aspect-[14/9] rounded-lg bg-muted"
+                        src={post.image}
+                      />
+                      <img
+                        alt={post.title}
+                        className="absolute inset-0 -z-10 aspect-[17/9] scale-y-110 rounded bg-muted blur-2xl"
+                        src={post.image}
+                      />
                     </div>
-                    <Link
-                      href={`/dashboard/blog/${post.id}`}
-                      className="line-clamp-1 font-semibold text-base leading-snug hover:text-primary"
-                    >
-                      {post.title}
-                    </Link>
-                    <p className="mt-1 line-clamp-1 text-muted-foreground text-sm">{post.excerpt}</p>
-                    <div className="mt-2 flex items-center gap-3 text-muted-foreground text-xs">
-                      <div className="flex items-center gap-1.5">
-                        <img src={post.authorAvatar} alt={post.author} className="h-5 w-5 rounded-full" />
-                        <span>{post.author}</span>
+                    <div className="px-2 py-1">
+                      <div className="-ms-0.5 mt-4 flex flex-wrap items-center gap-2">
+                        {post.tags.map((tag) => (
+                          <Badge
+                            className="bg-indigo-600/10 text-indigo-500 dark:bg-indigo-500/35 dark:text-indigo-300"
+                            key={tag}
+                            variant="secondary"
+                          >
+                            {tag}
+                          </Badge>
+                        ))}
                       </div>
-                      <span className="flex items-center gap-1">
-                        <Clock className="h-3 w-3" />
-                        {post.readTime}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <MessageSquare className="h-3 w-3" />
-                        {post.comments}
-                      </span>
+                      <h3 className="mt-4 font-medium text-xl tracking-[-0.015em]">
+                        {post.title}
+                      </h3>
+                      <div className="mt-3 flex items-center gap-1">
+                        <div className="flex items-center gap-1.5 text-muted-foreground text-sm">
+                          <CalendarDays className="h-4 w-4" />{" "}
+                          {formatDate(new Date(post.publishedAt), "MMM dd, yyyy")}
+                        </div>
+                        <Dot className="text-muted-foreground" />
+                        <div className="flex items-center gap-1.5 text-muted-foreground text-sm">
+                          <User className="h-4 w-4" /> {post.author}
+                        </div>
+                      </div>
+
+                      <Button className="mt-6">
+                        Read Article <ArrowRight className="h-4 w-4" />
+                      </Button>
                     </div>
                   </div>
-
-                  <div className="flex flex-shrink-0 gap-2">
-                    <Button size="sm" variant="outline" className="h-8 gap-1 text-xs" asChild>
-                      <Link href={`/dashboard/blog/${post.id}`}>
-                        Read <ArrowRight className="h-3 w-3" />
-                      </Link>
-                    </Button>
-                    <Button size="icon" variant="ghost" className="h-8 w-8">
-                      <Bookmark className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </Card>
+                </Link>
               ))}
             </div>
           )}
