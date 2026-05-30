@@ -1,13 +1,25 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
+import {
+  type ColumnDef,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  type PaginationState,
+  type SortingState,
+  useReactTable,
+} from "@tanstack/react-table";
 import { format } from "date-fns";
-import { Plus, Search, Edit, Trash2, MoreHorizontal, Hash } from "lucide-react";
+import { Edit, Hash, MoreHorizontal, Plus, Search, Trash2 } from "lucide-react";
 
+import { DataGrid, DataGridContainer, DataGridTable } from "@/components/reui/data-grid/data-grid";
+import { DataGridPagination } from "@/components/reui/data-grid/data-grid-pagination";
+import { DataGridScrollArea } from "@/components/reui/data-grid/data-grid-scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -24,15 +36,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Typography } from "@/components/ui/typography";
 
 type Tag = {
   id: string;
@@ -63,14 +66,13 @@ export default function BlogTagsPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingTag, setEditingTag] = useState<Tag | null>(null);
   const [formData, setFormData] = useState({ name: "", slug: "" });
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 5,
+  });
+  const [sorting, setSorting] = useState<SortingState>([{ id: "postCount", desc: true }]);
 
-  const filteredTags = tags.filter(
-    (tag) =>
-      tag.name.toLowerCase().includes(search.toLowerCase()) ||
-      tag.slug.toLowerCase().includes(search.toLowerCase()),
-  );
-
-  const handleOpenDialog = (tag?: Tag) => {
+  const handleOpenDialog = useCallback((tag?: Tag) => {
     if (tag) {
       setEditingTag(tag);
       setFormData({ name: tag.name, slug: tag.slug });
@@ -79,135 +81,184 @@ export default function BlogTagsPage() {
       setFormData({ name: "", slug: "" });
     }
     setDialogOpen(true);
-  };
+  }, []);
 
-  const handleSave = () => {
+  const handleSave = useCallback(() => {
     if (!formData.name.trim()) return;
 
     const slug = formData.slug || formData.name.toLowerCase().replace(/\s+/g, "-");
 
-    if (editingTag) {
-      setTags(
-        tags.map((tag) =>
-          tag.id === editingTag.id ? { ...tag, ...formData, slug } : tag,
-        ),
-      );
-    } else {
-      const newTag: Tag = {
-        id: `tag-${Date.now()}`,
-        ...formData,
-        slug,
-        postCount: 0,
-        createdAt: new Date().toISOString().split("T")[0],
-      };
-      setTags([...tags, newTag]);
-    }
+    setTags((prev) => {
+      if (editingTag) {
+        return prev.map((tag) => (tag.id === editingTag.id ? { ...tag, ...formData, slug } : tag));
+      }
+      return [
+        ...prev,
+        {
+          id: `tag-${Date.now()}`,
+          ...formData,
+          slug,
+          postCount: 0,
+          createdAt: new Date().toISOString().split("T")[0],
+        },
+      ];
+    });
     setDialogOpen(false);
-  };
+  }, [formData, editingTag]);
 
-  const handleDelete = (id: string) => {
-    setTags(tags.filter((tag) => tag.id !== id));
-  };
+  const handleDelete = useCallback((id: string) => {
+    setTags((prev) => prev.filter((tag) => tag.id !== id));
+  }, []);
+
+  const columns = useMemo<ColumnDef<Tag>[]>(
+    () => [
+      {
+        accessorKey: "name",
+        id: "name",
+        header: "Tag",
+        cell: ({ row }) => (
+          <div className="flex items-center gap-2">
+            <Hash className="h-4 w-4 text-muted-foreground" />
+            <span className="font-medium">{row.original.name}</span>
+          </div>
+        ),
+        size: 200,
+        enableSorting: true,
+      },
+      {
+        accessorKey: "slug",
+        header: "Slug",
+        cell: ({ row }) => (
+          <Badge variant="secondary" className="font-mono text-xs">
+            #{row.original.slug}
+          </Badge>
+        ),
+        size: 180,
+      },
+      {
+        accessorKey: "postCount",
+        header: "Posts",
+        cell: ({ row }) => <Badge variant="outline">{row.original.postCount}</Badge>,
+        size: 100,
+        meta: {
+          cellClassName: "font-medium",
+        },
+      },
+      {
+        accessorKey: "createdAt",
+        header: "Created",
+        cell: ({ row }) => (
+          <span className="text-muted-foreground text-sm">
+            {format(new Date(row.original.createdAt), "MMM dd, yyyy")}
+          </span>
+        ),
+        size: 140,
+        meta: {
+          cellClassName: "font-medium",
+        },
+      },
+      {
+        id: "actions",
+        header: "",
+        cell: ({ row }) => (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="h-8 w-8">
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => handleOpenDialog(row.original)} data-icon="inline-start">
+                <Edit className="h-4 w-4" />
+                Edit
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className="text-destructive focus:text-destructive"
+                onClick={() => handleDelete(row.original.id)}
+                data-icon="inline-start"
+              >
+                <Trash2 className="h-4 w-4" />
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ),
+        size: 60,
+        enableSorting: false,
+        enableHiding: false,
+      },
+    ],
+    [handleOpenDialog, handleDelete],
+  );
+
+  const table = useReactTable({
+    columns,
+    data: tags,
+    pageCount: Math.ceil(tags.length / pagination.pageSize),
+    getRowId: (row) => row.id,
+    state: {
+      pagination,
+      sorting,
+      globalFilter: search,
+    },
+    columnResizeMode: "onChange",
+    onPaginationChange: setPagination,
+    onSortingChange: setSorting,
+    onGlobalFilterChange: setSearch,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    globalFilterFn: (row, _columnId, filterValue) => {
+      return (
+        row.original.name.toLowerCase().includes(filterValue.toLowerCase()) ||
+        row.original.slug.toLowerCase().includes(filterValue.toLowerCase())
+      );
+    },
+  });
 
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
-        <div>
-          <Typography variant="h1">Tags</Typography>
-          <Typography variant="muted">
-            Manage and organize blog post tags
-          </Typography>
+        <div className="space-y-1">
+          <h1 className="text-3xl tracking-tight">Tags</h1>
+          <p className="text-muted-foreground text-sm">Manage and organize blog post tags</p>
         </div>
         <Button onClick={() => handleOpenDialog()} data-icon="inline-start">
-          <Plus />
+          <Plus className="h-4 w-4" />
           New Tag
         </Button>
       </div>
 
-      <Card>
-        <CardHeader className="pb-3">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <CardTitle>All Tags</CardTitle>
-            <div className="relative w-full max-w-sm">
-              <Search className="absolute top-2.5 left-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search tags..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="pl-8"
-              />
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Tag</TableHead>
-                <TableHead>Slug</TableHead>
-                <TableHead>Posts</TableHead>
-                <TableHead>Created</TableHead>
-                <TableHead className="w-[50px]" />
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredTags.map((tag) => (
-                <TableRow key={tag.id}>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <Hash className="h-4 w-4 text-muted-foreground" />
-                      <span className="font-medium">{tag.name}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="secondary" className="font-mono text-xs">
-                      #{tag.slug}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="outline">{tag.postCount}</Badge>
-                  </TableCell>
-                  <TableCell className="text-muted-foreground text-sm">
-                    {format(new Date(tag.createdAt), "MMM dd, yyyy")}
-                  </TableCell>
-                  <TableCell>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => handleOpenDialog(tag)} data-icon="inline-start">
-                          <Edit />
-                          Edit
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          className="text-destructive focus:text-destructive"
-                          onClick={() => handleDelete(tag.id)}
-                          data-icon="inline-start"
-                        >
-                          <Trash2 />
-                          Delete
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+      <div className="flex items-center gap-4">
+        <div className="relative w-full max-w-sm">
+          <Search className="absolute top-2.5 left-2.5 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search tags..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="pl-8"
+          />
+        </div>
+      </div>
+
+      <DataGrid table={table} recordCount={tags.length}>
+        <div className="w-full space-y-2.5">
+          <DataGridContainer>
+            <DataGridScrollArea>
+              <DataGridTable />
+            </DataGridScrollArea>
+          </DataGridContainer>
+          <DataGridPagination table={table} />
+        </div>
+      </DataGrid>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>{editingTag ? "Edit Tag" : "Create Tag"}</DialogTitle>
             <DialogDescription>
-              {editingTag
-                ? "Update the tag details below."
-                : "Add a new tag to categorize your blog posts."}
+              {editingTag ? "Update the tag details below." : "Add a new tag to categorize your blog posts."}
             </DialogDescription>
           </DialogHeader>
           <div className="flex flex-col gap-4 py-4">
@@ -240,9 +291,7 @@ export default function BlogTagsPage() {
             <Button variant="outline" onClick={() => setDialogOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={handleSave}>
-              {editingTag ? "Update" : "Create"}
-            </Button>
+            <Button onClick={handleSave}>{editingTag ? "Update" : "Create"}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

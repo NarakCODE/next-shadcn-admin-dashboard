@@ -11,6 +11,7 @@ declare module "@tanstack/react-table" {
   interface ColumnMeta<TData, TValue> {
     headerClassName?: string;
     cellClassName?: string;
+    expandedContent?: (row: TData) => React.ReactNode;
   }
 }
 
@@ -72,15 +73,29 @@ export function DataGridTable<TData>({ className }: { className?: string }) {
       </TableHeader>
       <TableBody>
         {table.getRowModel().rows?.length ? (
-          table.getRowModel().rows.map((row) => (
-            <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
-              {row.getVisibleCells().map((cell) => (
-                <TableCell key={cell.id} className={cn(cell.column.columnDef.meta?.cellClassName)}>
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </TableCell>
-              ))}
-            </TableRow>
-          ))
+          table.getRowModel().rows.map((row) => {
+            const expandedColumn = table.getAllColumns().find((col) => col.columnDef.meta?.expandedContent);
+            const expandedContent = expandedColumn?.columnDef.meta?.expandedContent;
+
+            return (
+              <React.Fragment key={row.id}>
+                <TableRow data-state={row.getIsSelected() && "selected"}>
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id} className={cn(cell.column.columnDef.meta?.cellClassName)}>
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </TableCell>
+                  ))}
+                </TableRow>
+                {row.getIsExpanded() && expandedContent && (
+                  <TableRow>
+                    <TableCell colSpan={row.getVisibleCells().length} className="p-0">
+                      {expandedContent(row.original)}
+                    </TableCell>
+                  </TableRow>
+                )}
+              </React.Fragment>
+            );
+          })
         ) : (
           <TableRow>
             <TableCell colSpan={table.getAllColumns().length} className="py-8 text-center text-muted-foreground">

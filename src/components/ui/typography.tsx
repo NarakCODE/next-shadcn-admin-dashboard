@@ -25,7 +25,7 @@ const variants: Record<NonNullable<TypographyProps["variant"]>, string> = {
 };
 
 export function Typography({ variant = "p", className, children, ...props }: TypographyProps) {
-  const Component = variant === "ordered-list" ? "ol" : variant === "list" ? "ul" : variant;
+  const Component = variant === "ordered-list" ? "ol" : variant === "list" ? "ul" : variant === "large" || variant === "lead" || variant === "muted" ? "p" : variant === "inline-code" ? "code" : variant;
 
   return (
     <Component

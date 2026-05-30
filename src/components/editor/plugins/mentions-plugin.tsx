@@ -51,7 +51,7 @@ const VALID_JOINS =
 const LENGTH_LIMIT = 75;
 
 const AtSignMentionsRegex = new RegExp(
-  "(^|\\s|\\()(" + "[" + TRIGGERS + "]" + "((?:" + VALID_CHARS + VALID_JOINS + "){0," + LENGTH_LIMIT + "})" + ")$",
+  `(^|\\s|\\()([${TRIGGERS}]((?:${VALID_CHARS}${VALID_JOINS}){0,${LENGTH_LIMIT}}))$`,
 );
 
 // 50 is the longest alias length limit.
@@ -59,7 +59,7 @@ const ALIAS_LENGTH_LIMIT = 50;
 
 // Regex used to match alias.
 const AtSignMentionsRegexAliasRegex = new RegExp(
-  "(^|\\s|\\()(" + "[" + TRIGGERS + "]" + "((?:" + VALID_CHARS + "){0," + ALIAS_LENGTH_LIMIT + "})" + ")$",
+  `(^|\\s|\\()([${TRIGGERS}]((?:${VALID_CHARS}){0,${ALIAS_LENGTH_LIMIT}}))$`,
 );
 
 // At most, 5 suggestions are shown in the popup.

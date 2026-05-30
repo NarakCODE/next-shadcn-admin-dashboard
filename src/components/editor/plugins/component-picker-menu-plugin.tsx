@@ -102,7 +102,7 @@ export function ComponentPickerMenuPlugin({
     const regex = new RegExp(queryString, "i");
 
     return [
-      ...(dynamicOptionsFn?.({ queryString }) || []),
+      ...(dynamicOptionsFn?.({ queryString }) ?? []),
       ...baseOptions.filter(
         (option) => regex.test(option.title) || option.keywords.some((keyword) => regex.test(keyword)),
       ),

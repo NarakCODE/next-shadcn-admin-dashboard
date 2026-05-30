@@ -14,12 +14,7 @@ import { LinkPlugin } from "@lexical/react/LexicalLinkPlugin";
 import { ListPlugin } from "@lexical/react/LexicalListPlugin";
 import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
-import {
-  $createHeadingNode,
-  $createQuoteNode,
-  HeadingNode,
-  QuoteNode,
-} from "@lexical/rich-text";
+import { $createHeadingNode, $createQuoteNode, HeadingNode, QuoteNode } from "@lexical/rich-text";
 import { $wrapNodes } from "@lexical/selection";
 import {
   $getRoot,
@@ -72,18 +67,9 @@ export function RichTextEditor({
 }: RichTextEditorProps) {
   return (
     <LexicalComposer initialConfig={editorConfig}>
-      <div
-        className={cn(
-          "overflow-hidden rounded-md border bg-background",
-          className,
-        )}
-      >
+      <div className={cn("overflow-hidden rounded-md border bg-background", className)}>
         <Toolbar />
-        <EditorContent
-          placeholder={placeholder}
-          value={value}
-          onChange={onChange}
-        />
+        <EditorContent placeholder={placeholder} value={value} onChange={onChange} />
       </div>
     </LexicalComposer>
   );
@@ -178,9 +164,7 @@ function BlockButton({
           const selection = $getSelection();
           if ($isRangeSelection(selection)) {
             if (format === "h1" || format === "h2" || format === "h3") {
-              const headingNode = $createHeadingNode(
-                format as "h1" | "h2" | "h3",
-              );
+              const headingNode = $createHeadingNode(format as "h1" | "h2" | "h3");
               $wrapNodes(selection, () => headingNode);
             } else if (format === "quote") {
               const quoteNode = $createQuoteNode();

@@ -34,7 +34,7 @@ class EmojiOption extends MenuOption {
     super(title);
     this.title = title;
     this.emoji = emoji;
-    this.keywords = options.keywords || [];
+    this.keywords = options.keywords ?? [];
   }
 }
 

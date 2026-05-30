@@ -5,18 +5,7 @@ import { useState } from "react";
 import Link from "next/link";
 
 import { format } from "date-fns";
-import {
-  ArrowLeft,
-  Bookmark,
-  CalendarDays,
-  Clock,
-  Heart,
-  MessageCircle,
-  Send,
-  Share2,
-  ThumbsUp,
-  User,
-} from "lucide-react";
+import { ArrowLeft, Bookmark, CalendarDays, Clock, Heart, MessageCircle, Send, Share2, ThumbsUp } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -40,8 +29,7 @@ const sampleComments: Comment[] = [
   {
     id: "comment-1",
     author: "Sarah Chen",
-    authorAvatar:
-      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&dpr=2&q=80",
+    authorAvatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&dpr=2&q=80",
     content:
       "Great article! The explanation of partial prerendering was particularly helpful. I've been struggling with implementing it in my project, and this cleared up a lot of confusion.",
     publishedAt: "2024-12-16T10:30:00Z",
@@ -50,8 +38,7 @@ const sampleComments: Comment[] = [
       {
         id: "reply-1",
         author: "Alex Johnson",
-        authorAvatar:
-          "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&dpr=2&q=80",
+        authorAvatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&dpr=2&q=80",
         content:
           "Thanks Sarah! Glad it helped. Feel free to reach out if you have any specific questions about the implementation.",
         publishedAt: "2024-12-16T11:45:00Z",
@@ -62,8 +49,7 @@ const sampleComments: Comment[] = [
   {
     id: "comment-2",
     author: "Mike Peters",
-    authorAvatar:
-      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=40&h=40&dpr=2&q=80",
+    authorAvatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=40&h=40&dpr=2&q=80",
     content:
       "The server actions section was incredibly detailed. One thing I'd add is that you should be careful with caching when using mutations - it can lead to stale data if not handled properly.",
     publishedAt: "2024-12-17T08:15:00Z",
@@ -72,10 +58,8 @@ const sampleComments: Comment[] = [
   {
     id: "comment-3",
     author: "Emily Davis",
-    authorAvatar:
-      "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=40&h=40&dpr=2&q=80",
-    content:
-      "This is the most comprehensive guide I've found so far. Bookmarked for future reference!",
+    authorAvatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=40&h=40&dpr=2&q=80",
+    content: "This is the most comprehensive guide I've found so far. Bookmarked for future reference!",
     publishedAt: "2024-12-18T14:20:00Z",
     likes: 15,
   },
@@ -109,7 +93,7 @@ export default function BlogDetailPage() {
       <Button variant="ghost" size="sm" className="mb-6 gap-2" asChild>
         <Link href="/dashboard/blog">
           <ArrowLeft className="h-4 w-4" />
-          Back to Blog Posts
+          Back
         </Link>
       </Button>
 
@@ -131,8 +115,8 @@ export default function BlogDetailPage() {
         </h1>
 
         <p className="mb-6 text-muted-foreground text-xl leading-relaxed">
-          Learn everything about Next.js 15's new features including partial
-          prerendering, server actions, and the new caching model.
+          Learn everything about Next.js 15's new features including partial prerendering, server actions, and the new
+          caching model.
         </p>
 
         <div className="flex items-center justify-between">
@@ -171,9 +155,7 @@ export default function BlogDetailPage() {
               className={bookmarked ? "text-yellow-500" : ""}
               onClick={() => setBookmarked(!bookmarked)}
             >
-              <Bookmark
-                className={`h-5 w-5 ${bookmarked ? "fill-current" : ""}`}
-              />
+              <Bookmark className={`h-5 w-5 ${bookmarked ? "fill-current" : ""}`} />
             </Button>
             <Button variant="ghost" size="icon">
               <Share2 className="h-5 w-5" />
@@ -192,32 +174,28 @@ export default function BlogDetailPage() {
       </div>
 
       {/* Article Content */}
-      <article className="prose prose-lg max-w-none dark:prose-invert">
+      <article className="prose prose-lg dark:prose-invert max-w-none">
         <Typography variant="h2">Introduction</Typography>
         <Typography>
-          Next.js 15 brings a host of new features and improvements that make
-          building modern web applications easier than ever. In this
-          comprehensive guide, we'll explore everything you need to know to get
-          started with the latest version.
+          Next.js 15 brings a host of new features and improvements that make building modern web applications easier
+          than ever. In this comprehensive guide, we'll explore everything you need to know to get started with the
+          latest version.
         </Typography>
 
         <Typography variant="h2">Partial Prerendering (PPR)</Typography>
         <Typography>
-          One of the most exciting features in Next.js 15 is Partial
-          Prerendering. This allows you to combine static and dynamic rendering
-          in a single route, giving you the best of both worlds:
+          One of the most exciting features in Next.js 15 is Partial Prerendering. This allows you to combine static and
+          dynamic rendering in a single route, giving you the best of both worlds:
         </Typography>
         <ul className="my-6 ml-6 list-disc [&>li]:mt-2">
           <li>
             <strong>Instant loading</strong> - Static shell loads immediately
           </li>
           <li>
-            <strong>Dynamic content</strong> - Suspense boundaries stream in
-            dynamic data
+            <strong>Dynamic content</strong> - Suspense boundaries stream in dynamic data
           </li>
           <li>
-            <strong>Better UX</strong> - Users see content faster while data
-            loads
+            <strong>Better UX</strong> - Users see content faster while data loads
           </li>
         </ul>
 
@@ -234,9 +212,8 @@ export default async function Page() {
 
         <Typography variant="h2">Server Actions</Typography>
         <Typography>
-          Server Actions have been significantly improved in Next.js 15. You can
-          now use them with better type safety, improved error handling, and
-          more predictable caching behavior.
+          Server Actions have been significantly improved in Next.js 15. You can now use them with better type safety,
+          improved error handling, and more predictable caching behavior.
         </Typography>
 
         <Typography variant="h3">Key Improvements</Typography>
@@ -249,30 +226,25 @@ export default async function Page() {
 
         <Typography variant="h2">New Caching Model</Typography>
         <Typography>
-          The caching model has been refined to be more predictable and easier
-          to reason about. Key changes include:
+          The caching model has been refined to be more predictable and easier to reason about. Key changes include:
         </Typography>
         <blockquote className="mt-6 border-l-2 pl-6 italic">
           <Typography>
-            "With Next.js 15, we've made caching more explicit and predictable.
-            You now have full control over what gets cached and when it gets
-            revalidated." - Next.js Team
+            "With Next.js 15, we've made caching more explicit and predictable. You now have full control over what gets
+            cached and when it gets revalidated." - Next.js Team
           </Typography>
         </blockquote>
 
         <Typography variant="h2">Getting Started</Typography>
-        <Typography>
-          To upgrade to Next.js 15, run the following command in your project:
-        </Typography>
+        <Typography>To upgrade to Next.js 15, run the following command in your project:</Typography>
         <pre className="rounded-lg bg-muted p-4 text-sm">
           <code>{`npm install next@latest react@latest react-dom@latest`}</code>
         </pre>
 
         <Typography variant="h2">Conclusion</Typography>
         <Typography>
-          Next.js 15 represents a significant step forward in building modern
-          web applications. With Partial Prerendering, improved Server Actions,
-          and a more predictable caching model, you have all the tools you need
+          Next.js 15 represents a significant step forward in building modern web applications. With Partial
+          Prerendering, improved Server Actions, and a more predictable caching model, you have all the tools you need
           to create fast, dynamic, and user-friendly applications.
         </Typography>
       </article>
@@ -292,9 +264,7 @@ export default async function Page() {
             </Avatar>
             <div>
               <p className="font-medium">Alex Johnson</p>
-              <p className="text-muted-foreground text-sm">
-                Senior Developer & Technical Writer
-              </p>
+              <p className="text-muted-foreground text-sm">Senior Developer & Technical Writer</p>
             </div>
           </div>
           <Button variant="outline" size="sm">
@@ -320,9 +290,7 @@ export default async function Page() {
 
       {/* Comments Section */}
       <section className="mt-12">
-        <h2 className="mb-6 font-semibold text-2xl">
-          Comments ({comments.length})
-        </h2>
+        <h2 className="mb-6 font-semibold text-2xl">Comments ({comments.length})</h2>
 
         {/* Comment Input */}
         <Card className="mb-8 p-4">
@@ -338,11 +306,7 @@ export default async function Page() {
                 className="min-h-[100px] resize-none"
               />
               <div className="flex justify-end">
-                <Button
-                  onClick={handleSubmitComment}
-                  disabled={!comment.trim()}
-                  className="gap-2"
-                >
+                <Button onClick={handleSubmitComment} disabled={!comment.trim()} className="gap-2">
                   <Send className="h-4 w-4" />
                   Post Comment
                 </Button>
@@ -368,24 +332,18 @@ export default async function Page() {
                   </Avatar>
                   <div className="flex-1">
                     <div className="mb-2 flex items-center gap-2">
-                      <span className="font-medium text-sm">
-                        {comment.author}
-                      </span>
+                      <span className="font-medium text-sm">{comment.author}</span>
                       <span className="text-muted-foreground text-xs">
                         {format(new Date(comment.publishedAt), "MMM dd, yyyy")}
                       </span>
                     </div>
-                    <p className="mb-3 text-muted-foreground text-sm leading-relaxed">
-                      {comment.content}
-                    </p>
+                    <p className="mb-3 text-muted-foreground text-sm leading-relaxed">{comment.content}</p>
                     <div className="flex items-center gap-4">
                       <button className="flex items-center gap-1 text-muted-foreground text-xs hover:text-foreground">
                         <ThumbsUp className="h-3 w-3" />
                         {comment.likes}
                       </button>
-                      <button className="text-muted-foreground text-xs hover:text-foreground">
-                        Reply
-                      </button>
+                      <button className="text-muted-foreground text-xs hover:text-foreground">Reply</button>
                     </div>
                   </div>
                 </div>
@@ -393,7 +351,7 @@ export default async function Page() {
 
               {/* Replies */}
               {comment.replies && (
-                <div className="ml-8 mt-4 space-y-4">
+                <div className="mt-4 ml-8 space-y-4">
                   {comment.replies.map((reply) => (
                     <Card key={reply.id} className="p-4">
                       <div className="flex gap-3">
@@ -408,24 +366,18 @@ export default async function Page() {
                         </Avatar>
                         <div className="flex-1">
                           <div className="mb-2 flex items-center gap-2">
-                            <span className="font-medium text-sm">
-                              {reply.author}
-                            </span>
+                            <span className="font-medium text-sm">{reply.author}</span>
                             <span className="text-muted-foreground text-xs">
                               {format(new Date(reply.publishedAt), "MMM dd, yyyy")}
                             </span>
                           </div>
-                          <p className="mb-3 text-muted-foreground text-sm leading-relaxed">
-                            {reply.content}
-                          </p>
+                          <p className="mb-3 text-muted-foreground text-sm leading-relaxed">{reply.content}</p>
                           <div className="flex items-center gap-4">
                             <button className="flex items-center gap-1 text-muted-foreground text-xs hover:text-foreground">
                               <ThumbsUp className="h-3 w-3" />
                               {reply.likes}
                             </button>
-                            <button className="text-muted-foreground text-xs hover:text-foreground">
-                              Reply
-                            </button>
+                            <button className="text-muted-foreground text-xs hover:text-foreground">Reply</button>
                           </div>
                         </div>
                       </div>

@@ -9,6 +9,7 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   type PaginationState,
+  type RowSelectionState,
   type SortingState,
   useReactTable,
 } from "@tanstack/react-table";
@@ -28,6 +29,8 @@ import {
   UserX,
 } from "lucide-react";
 
+import { type BulkAction, BulkActionsBar } from "@/components/features/bulk-actions-bar";
+import { SavedViewsManager } from "@/components/features/saved-views-manager";
 import { DataGrid, DataGridContainer, DataGridTable } from "@/components/reui/data-grid/data-grid";
 import { DataGridColumnHeader } from "@/components/reui/data-grid/data-grid-column-header";
 import { DataGridPagination } from "@/components/reui/data-grid/data-grid-pagination";
@@ -35,6 +38,7 @@ import { DataGridScrollArea } from "@/components/reui/data-grid/data-grid-scroll
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -44,6 +48,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useSavedViews } from "@/hooks/use-saved-views";
 
 type User = {
   id: string;
@@ -255,7 +260,7 @@ const statusColors = {
 };
 
 export default function UsersPage() {
-  const [users] = useState<User[]>(initialUsers);
+  const [users, setUsers] = useState<User[]>(initialUsers);
   const [globalFilter, setGlobalFilter] = useState("");
   const [roleFilter, setRoleFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
@@ -264,7 +269,37 @@ export default function UsersPage() {
     pageSize: 5,
   });
   const [sorting, setSorting] = useState<SortingState>([{ id: "name", desc: false }]);
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const formattedDate = format(new Date(), "EEEE, do MMMM yyyy");
+
+  // Saved views hook
+  const {
+    views,
+    activeViewId,
+    saveView,
+    updateView,
+    deleteView,
+    loadView,
+    setActiveView,
+    setDefaultView,
+    hasUnsavedChanges,
+  } = useSavedViews({
+    namespace: "users-page",
+    defaultFilters: {
+      globalFilter: "",
+      roleFilter: "all",
+      statusFilter: "all",
+    },
+  });
+
+  const currentFilters = useMemo(
+    () => ({
+      globalFilter,
+      roleFilter,
+      statusFilter,
+    }),
+    [globalFilter, roleFilter, statusFilter],
+  );
 
   const filteredData = useMemo(() => {
     return users.filter((user) => {
@@ -285,6 +320,26 @@ export default function UsersPage() {
 
   const columns = useMemo<ColumnDef<User>[]>(
     () => [
+      {
+        id: "select",
+        header: ({ table }) => (
+          <Checkbox
+            checked={table.getIsAllPageRowsSelected()}
+            onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+            aria-label="Select all"
+          />
+        ),
+        cell: ({ row }) => (
+          <Checkbox
+            checked={row.getIsSelected()}
+            onCheckedChange={(value) => row.toggleSelected(!!value)}
+            aria-label="Select row"
+          />
+        ),
+        size: 40,
+        enableSorting: false,
+        enableHiding: false,
+      },
       {
         accessorKey: "name",
         id: "name",
@@ -429,16 +484,89 @@ export default function UsersPage() {
       pagination,
       sorting,
       globalFilter,
+      rowSelection,
     },
     columnResizeMode: "onChange",
     onPaginationChange: setPagination,
     onSortingChange: setSorting,
     onGlobalFilterChange: setGlobalFilter,
+    onRowSelectionChange: setRowSelection,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    enableRowSelection: true,
   });
+
+  // Bulk actions handlers
+  const handleBulkDelete = async () => {
+    const selectedIds = Object.keys(rowSelection);
+    setUsers((prev) => prev.filter((user) => !selectedIds.includes(user.id)));
+    setRowSelection({});
+  };
+
+  const handleBulkActivate = async () => {
+    const selectedIds = Object.keys(rowSelection);
+    setUsers((prev) => prev.map((user) => (selectedIds.includes(user.id) ? { ...user, status: "active" } : user)));
+    setRowSelection({});
+  };
+
+  const handleBulkSuspend = async () => {
+    const selectedIds = Object.keys(rowSelection);
+    setUsers((prev) => prev.map((user) => (selectedIds.includes(user.id) ? { ...user, status: "suspended" } : user)));
+    setRowSelection({});
+  };
+
+  const handleBulkExport = (format: "csv" | "json") => {
+    const selectedIds = Object.keys(rowSelection);
+    const selectedUsers = users.filter((user) => selectedIds.includes(user.id));
+    console.log(`Exporting ${selectedUsers.length} users as ${format}`);
+    // In production, this would trigger actual export
+  };
+
+  const bulkActions: BulkAction[] = [
+    {
+      id: "activate",
+      label: "Activate",
+      icon: <UserCheck className="h-4 w-4" />,
+      onClick: handleBulkActivate,
+    },
+    {
+      id: "suspend",
+      label: "Suspend",
+      icon: <UserX className="h-4 w-4" />,
+      onClick: handleBulkSuspend,
+    },
+    {
+      id: "delete",
+      label: "Delete",
+      icon: <Trash2 className="h-4 w-4" />,
+      onClick: handleBulkDelete,
+      variant: "destructive",
+    },
+  ];
+
+  const selectedCount = Object.keys(rowSelection).length;
+
+  // Saved views handlers
+  const handleSaveView = (name: string) => {
+    saveView(name, currentFilters);
+  };
+
+  const handleLoadView = (id: string) => {
+    const filters = loadView(id);
+    setGlobalFilter(filters.globalFilter);
+    setRoleFilter(filters.roleFilter);
+    setStatusFilter(filters.statusFilter);
+  };
+
+  const handleRenameView = (id: string, name: string) => {
+    updateView(id, { name });
+  };
+
+  const handleClearActiveView = () => {
+    setActiveView(null);
+  };
 
   return (
     <div className="flex flex-col gap-4">
@@ -495,6 +623,17 @@ export default function UsersPage() {
         </div>
 
         <div className="flex items-center gap-2">
+          <SavedViewsManager
+            views={views}
+            activeViewId={activeViewId}
+            hasUnsavedChanges={hasUnsavedChanges(currentFilters)}
+            onSave={handleSaveView}
+            onLoad={handleLoadView}
+            onDelete={deleteView}
+            onRename={handleRenameView}
+            onSetDefault={setDefaultView}
+            onClearActive={handleClearActiveView}
+          />
           <Filter className="h-4 w-4 text-muted-foreground" />
           <Select value={roleFilter} onValueChange={setRoleFilter}>
             <SelectTrigger className="w-36">
@@ -525,6 +664,17 @@ export default function UsersPage() {
           </Select>
         </div>
       </div>
+
+      {/* Bulk Actions Bar */}
+      {selectedCount > 0 && (
+        <BulkActionsBar
+          selectedCount={selectedCount}
+          actions={bulkActions}
+          onClearSelection={() => setRowSelection({})}
+          enableExport
+          onExport={handleBulkExport}
+        />
+      )}
 
       <DataGrid table={table} recordCount={filteredData.length}>
         <div className="w-full space-y-2.5">
