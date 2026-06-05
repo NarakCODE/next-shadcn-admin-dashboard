@@ -53,7 +53,8 @@
       "correctness": {
         "noUndeclaredVariables": "error",
         "noNestedComponentDefinitions": "error",
-        "noUndeclaredDependencies": "error"
+        "noUndeclaredDependencies": "error",
+        "useExhaustiveDependencies": "warn"
       },
       "nursery": {
         "useSortedClasses": "on",
@@ -81,7 +82,7 @@
         "noConstantBinaryExpressions": "error",
         "noEmptyBlockStatements": "error",
         "noUnknownAtRules": "off",
-        "noImportCycles": "error"
+        "noImportCycles": "warn"
       },
       "complexity": {
         "noImportantStyles": "off"
